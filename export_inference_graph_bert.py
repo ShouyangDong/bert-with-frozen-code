@@ -17,45 +17,7 @@ import numpy as np
 import tensorflow as tf
 from six.moves import xrange
 
-flags = tf.flags
-
-FLAGS = flags.FLAGS
-
-## Required parameters
-flags.DEFINE_string(
-    "data_dir", None,
-    "The input data dir. Should contain the .tsv files (or other data files) "
-    "for the task.")
-
-
-flags.DEFINE_string(
-    "model_dir", None,
-    "The input model dir. Should contain the .ckpt files (or other data files) "
-    "for the task.")
-
-
-flags.DEFINE_string(
-    "serving_model_save_path", None,
-    "The input model dir. Should be used to contain the .pbfiles (or other data files) "
-    "for the task.")
-
-
-flags.DEFINE_string(
-    "bert_config_file", None,
-    "The config json file corresponding to the pre-trained BERT model. "
-    "This specifies the model architecture.")
-
-
-flags.DEFINE_string(
-    "ckpt_file", None,
-    "The config json file corresponding to the pre-trained BERT model. "
-    "This specifies the model architecture.")
-
-
-    filepath = "/Users/dongshouyang/Downloads/chinese_L-12_H-768_A-12/bert_model.ckpt"
-    use_one_hot_embeddings = False
-
-
+data_dir = "/Users/dongshouyang/Downloads/xnli/"
 class DataProcessor(object):
     """Base class for data converters for sequence classification data sets."""
 
@@ -276,7 +238,7 @@ class XnliProcessor(DataProcessor):
         return ["contradiction", "entailment", "neutral"]
 
 
-def create_model(bert_config, is_training, input_ids, input_mask, segment_ids,num_labels,                   use_one_hot_embeddings):
+def create_model(bert_config, is_training, input_ids, input_mask, segment_ids,num_labels,use_one_hot_embeddings):
     """Creates a classification model."""
     model = modeling.BertModel(
         config=bert_config,
@@ -368,17 +330,24 @@ def serving_input_receiver_fn():
     return tf.estimator.export.ServingInputReceiver(features, receive_tensors)
 
 
-def save_serving_model(model_dir, SERVING_MODEL_SAVE_PATH, bert_config, num_labels, use_one_hot_embeddings, filepath):
+def save_serving_model(MODEL_DIR, SERVING_MODEL_SAVE_PATH, bert_config, num_labels, use_one_hot_embeddings,filepath):
     # Session configuration.
     params = tf.contrib.training.HParams()  # Empty hyperparameters
     # Set the run_config where to load the model from
-    run_config = tf.contrib.learn.RunConfig(model_dir=model_dir)
+    run_config = tf.contrib.learn.RunConfig(model_dir=MODEL_DIR)
 
     resnet_classifier = get_estimator(run_config, params, bert_config, num_labels, use_one_hot_embeddings)
     resnet_classifier.export_savedmodel(
         export_dir_base=SERVING_MODEL_SAVE_PATH, serving_input_receiver_fn=serving_input_receiver_fn)
 
-def main():
+
+if __name__ == '__main__':
+    
+    MODEL_DIR = "/Users/dongshouyang/Downloads/xnli_output/"
+    SERVING_MODEL_SAVE_PATH = "/Users/dongshouyang/Downloads/bert_frozen"
+    bert_config_file = '/Users/dongshouyang/Downloads/chinese_L-12_H-768_A-12/bert_config.json'
+    filepath = "/Users/dongshouyang/Downloads/chinese_L-12_H-768_A-12/bert_model.ckpt"
+    use_one_hot_embeddings = False
     processors = {
       "cola": ColaProcessor,
       "mnli": MnliProcessor,
@@ -392,13 +361,4 @@ def main():
     num_labels = len(label_list)
     print("numer of labels:", num_labels)
     bert_config = modeling.BertConfig.from_json_file(bert_config_file)
-    save_serving_model(model_dir, SERVING_MODEL_SAVE_PATH, bert_config, num_labels, use_one_hot_embeddings,filepath)
-
-if __name__ == '__main__':
-    MODEL_DIR = "/Users/dongshouyang/Downloads/xnli_output/"
-    SERVING_MODEL_SAVE_PATH = "/Users/dongshouyang/Downloads/bert_frozen"
-    bert_config_file = '/Users/dongshouyang/Downloads/chinese_L-12_H-768_A-12/bert_config.json'
-    filepath = "/Users/dongshouyang/Downloads/chinese_L-12_H-768_A-12/bert_model.ckpt"
-    use_one_hot_embeddings = False
-    
-    
+    save_serving_model(MODEL_DIR, SERVING_MODEL_SAVE_PATH, bert_config, num_labels, use_one_hot_embeddings,filepath)

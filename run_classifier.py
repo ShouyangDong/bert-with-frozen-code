@@ -30,6 +30,8 @@ flags = tf.flags
 
 FLAGS = flags.FLAGS
 
+os.environ['CUDA_VISIBLE_DEVICES'] = '0'
+
 ## Required parameters
 flags.DEFINE_string(
     "data_dir", None,
@@ -606,6 +608,7 @@ def create_model(bert_config, is_training, input_ids, input_mask, segment_ids,
     logits = tf.matmul(output_layer, output_weights, transpose_b=True)
     logits = tf.nn.bias_add(logits, output_bias)
     probabilities = tf.nn.softmax(logits, axis=-1)
+    print("shape of output_possibility:{}/{}".format(probabilities.shape, probabilities.dtype))
     log_probs = tf.nn.log_softmax(logits, axis=-1)
 
     one_hot_labels = tf.one_hot(labels, depth=num_labels, dtype=tf.float32)
@@ -629,12 +632,17 @@ def model_fn_builder(bert_config, num_labels, init_checkpoint, learning_rate,
       tf.logging.info("  name = %s, shape = %s" % (name, features[name].shape))
 
     input_ids = features["input_ids"]
+    print("shape of input_ids: {}/{}".format(input_ids.shape, input_ids.dtype))
     input_mask = features["input_mask"]
+    print("shape of input_mask: {}/{}".format(input_mask.shape, input_mask.dtype))
     segment_ids = features["segment_ids"]
+    print("shape of segment_ids:{}/{}".format(segment_ids.shape, segment_ids.dtype))
     label_ids = features["label_ids"]
+    print("shape of label_ids: ", label_ids.shape)
     is_real_example = None
     if "is_real_example" in features:
       is_real_example = tf.cast(features["is_real_example"], dtype=tf.float32)
+      print("shape of is_real_example: ", is_real_example.shape)
     else:
       is_real_example = tf.ones(tf.shape(label_ids), dtype=tf.float32)
 
