@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # BERT
 
 **\*\*\*\*\* New November 23rd, 2018: Un-normalized multilingual model + Thai +
@@ -988,3 +989,8 @@ For help or issues using BERT, please submit a GitHub issue.
 For personal communication related to BERT, please contact Jacob Devlin
 (`jacobdevlin@google.com`), Ming-Wei Chang (`mingweichang@google.com`), or
 Kenton Lee (`kentonl@google.com`).
+||||||| merged common ancestors
+=======
+# bert-with-frozen-code
+add frozen and its prediction code by using pb file
+>>>>>>> 8901d5d46dbebc8f2b2115c8a4c261247cc87384
