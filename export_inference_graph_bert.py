@@ -377,7 +377,7 @@ def save_serving_model(model_dir, serving_model_save_path, bert_config, num_labe
         export_dir_base=serving_model_save_path, serving_input_receiver_fn=serving_input_receiver_fn)
 
 
-def main():
+def main(_):
     processors = {
       "cola": ColaProcessor,
       "mnli": MnliProcessor,
