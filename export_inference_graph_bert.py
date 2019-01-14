@@ -390,7 +390,7 @@ def main():
     num_labels = len(label_list)
     print("numer of labels:", num_labels)
     bert_config = modeling.BertConfig.from_json_file(FLAGS.bert_config_file)
-    save_serving_model(FLAGS.model_dir, FLAGS.serving_model_save_path, FLAGS.bert_config, num_labels, FLAGS.use_one_hot_embeddings,FLAGS.ckpt_file)
+    save_serving_model(FLAGS.model_dir, FLAGS.serving_model_save_path, bert_config, num_labels, FLAGS.use_one_hot_embeddings,FLAGS.ckpt_file)
 
 if __name__ == '__main__':
     flags.mark_flag_as_required("data_dir")
